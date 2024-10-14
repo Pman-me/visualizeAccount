@@ -13,8 +13,8 @@ chain_endpoint_api = {
 }
 
 chain_data = [
-    {'chain': 'base', 'rpc': 'https://mainnet.base.org', 'api_endpoint': 'https://api.basescan.org/api',
+    {'chain': 'base', 'chain_id': 8453, 'rpc': 'https://mainnet.base.org', 'api_endpoint': 'https://api.basescan.org/api',
      'api_key': settings.BASE_API_KEY},
-    {'chain': 'scroll', 'rpc': 'https://rpc.scroll.io', 'api_endpoint': 'https://api.scrollscan.com/api',
+    {'chain': 'scroll', 'chain_id': 534352, 'rpc': 'https://rpc.scroll.io', 'api_endpoint': 'https://api.scrollscan.com/api',
      'api_key': settings.SCROLL_API_KEY},
 ]
