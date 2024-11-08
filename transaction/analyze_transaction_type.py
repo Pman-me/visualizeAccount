@@ -64,20 +64,6 @@ def save_diagnosed_tx(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee
             'fee': f"{w3.from_wei((int(tx['gasUsed']) * int(tx['gasPrice']) + int(l1_fee, 16)), 'ether'):.10f}",
             'chain': next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None)
         })
-        # tx_repo.set({
-        #     'hash': tx['hash'],
-        #     'from': tx['from'],
-        #     'to_contract_name': get_contract_name(api_key=api_key, api_endpoint=api_endpoint, contract_address=tx['to']),
-        #     'call_data': tx['input'],
-        #     'in_amount': in_amount,
-        #     'out_amount': out_amount,
-        #     'in_currency': in_currency,
-        #     'out_currency': out_currency,
-        #     'nonce': tx['nonce'],
-        #     'timestamp': tx['timeStamp'],
-        #     'fee': w3.from_wei(int(tx['gasUsed']) * int(tx['gasPrice']), 'ether'),
-        #     'chain': next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None)
-        # })
 
 
 def categorize_transaction(chain_data: [], txs_per_chain: dict):
@@ -100,18 +86,8 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
                                       data=src_dst_per_token_contract,
                                       tx=tx, l1_fee=tx_receipt['l1Fee'], tx_repo=TxRepo(session=get_db_session()))
 
-                # detect bridge process after determining the approximate type of all transactions
-
             else:
                 pass
-
-            # decode_tx_input_data(w3, tx, api_key=api_key, api_endpoint=api_endpoint)
-            # for log in logs:
-            #     address = log['address']
-            #     value = log['data']
-            #     topics = log['topics']
-            #     # print(address, 'value: ', int(binascii.hexlify(value).decode('ascii'), 16))
-            #     print(topics[0])
 
 
 def analyze_logs_per_tx(w3: Web3, logs) -> dict:

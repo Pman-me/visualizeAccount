@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 
 from db.sesstion import get_db_session
-from models.base_model import BaseModel
 from repository.base_repo import BaseRepo
 
 
