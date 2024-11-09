@@ -17,4 +17,5 @@ class TransactionModel(BaseModel):
     nonce = Column(Integer)
     timestamp = Column(DateTime(timezone=False))
     chain = Column(String())
+    tx_type = Column(String())
     bridge_id = Column(Integer, ForeignKey('bridge.id', ondelete='cascade', onupdate='cascade'), nullable=True)
