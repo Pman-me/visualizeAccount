@@ -6,7 +6,7 @@ from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address
     withdrawal_event_sig_hash
 from db.sesstion import get_db_session
 from repository.tx_repo import TxRepo
-from transaction.categorize_swap import specify_swap_data
+from transaction.categorize_swap import process_swap_tx
 
 
 def save_tx(swap_txs: [], tx_repo: TxRepo):
@@ -31,9 +31,9 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
                 src_dst_per_token_contract = analyze_logs_per_tx(w3, logs)
                 # find swap type
                 if src_dst_per_token_contract:
-                    swap_txs = specify_swap_data(w3, api_endpoint=api_endpoint, api_key=api_key,
-                                                 data=src_dst_per_token_contract,
-                                                 tx=tx, l1_fee=tx_receipt['l1Fee'])
+                    swap_txs = process_swap_tx(w3, api_endpoint=api_endpoint, api_key=api_key,
+                                               data=src_dst_per_token_contract,
+                                               tx=tx, l1_fee=tx_receipt['l1Fee'])
 
                     save_tx(swap_txs, tx_repo=TxRepo(session=get_db_session()))
 

@@ -4,13 +4,11 @@ from web3.exceptions import ABIFunctionNotFound
 from consts import chain_data
 from contract.checking_proxy_contract import is_eip1967_proxy
 from contract.get_contract_detail import get_contract_abi, get_contract_name
-from swap_enum import swap
-from transaction.internal_txs import get_internal_txs_by_hash
 
 
-def specify_swap_data(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):
+def process_swap_tx(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):
     swap_txs = []
-    send = recv = native_currency = native_amount = ""
+    send = recv = ""
 
     for token_contract_address, value in data.items():
 
@@ -29,24 +27,10 @@ def specify_swap_data(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee
                 print(tx['hash'], data, "ABIFunctionNotFound ***********************")
                 continue
 
-            if value.get('from'):
+            if value.get('from') or value.get('deposit'):
                 send += f'{amount} {currency}' if not send else f' {amount} {currency}, '
-            elif value.get('to'):
+            elif value.get('to') or value.get('withdrawal'):
                 recv = f'{amount} {currency}'
-            elif 'from' not in value and 'to' not in value:
-                native_currency = currency
-                native_amount = amount
-
-    if native_currency:
-        if recv:
-            send += f'{native_amount} {native_currency}'
-        elif send:
-
-            if internal_txs := get_internal_txs_by_hash(api_endpoint=api_endpoint, api_key=api_key, tx_hash=tx['hash']):
-
-                if filter(lambda _tx: w3.to_checksum_address(_tx['to']) == w3.to_checksum_address(account_address),
-                          internal_txs):
-                    recv = f'{native_amount} {native_currency}'
 
     if send and recv:
         swap_txs.append({
