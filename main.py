@@ -8,7 +8,8 @@ from transaction.txs_data_per_chain import fetch_txs_per_chain
 def main():
 
     SQLBASE.metadata.create_all(bind=engine)
-    categorize_transaction(chain_data, fetch_txs_per_chain(chain_data, Settings().ACCOUNT_ADDRESS))
+    account_address = Settings().ACCOUNT_ADDRESS
+    categorize_transaction(chain_data, fetch_txs_per_chain(chain_data, account_address), account_address)
 
 
 if __name__ == '__main__':

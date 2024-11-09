@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class swap(Enum):
-    ALT_TO_ALT = 0
-    ALT_TO_ETH = 1
-    ETH_TO_ALT = 2
+class TxType(Enum):
+    TRANSFER = 0
+    SWAP = 1
+    BRIDGE = 2
