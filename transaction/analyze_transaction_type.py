@@ -1,7 +1,5 @@
 from web3 import Web3
 
-from web3 import Web3
-
 from consts import transfer_event_sig_hash, account_address, deposit_event_sig_hash, zero_address
 from db.sesstion import get_db_session
 from repository.tx_repo import TxRepo
@@ -35,18 +33,8 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
 
                     save_tx(swap_txs, tx_repo=TxRepo(session=get_db_session()))
 
-                # detect bridge process after determining the approximate type of all transactions
-
             else:
                 pass
-
-            # decode_tx_input_data(w3, tx, api_key=api_key, api_endpoint=api_endpoint)
-            # for log in logs:
-            #     address = log['address']
-            #     value = log['data']
-            #     topics = log['topics']
-            #     # print(address, 'value: ', int(binascii.hexlify(value).decode('ascii'), 16))
-            #     print(topics[0])
 
 
 def analyze_logs_per_tx(w3: Web3, logs) -> dict:
