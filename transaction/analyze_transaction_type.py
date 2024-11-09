@@ -1,6 +1,9 @@
+from pprint import pprint
+
 from web3 import Web3
 
-from consts import transfer_event_sig_hash, account_address, deposit_event_sig_hash, zero_address
+from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address, \
+    withdrawal_event_sig_hash
 from db.sesstion import get_db_session
 from repository.tx_repo import TxRepo
 from transaction.categorize_swap import specify_swap_data
@@ -8,7 +11,8 @@ from transaction.categorize_swap import specify_swap_data
 
 def save_tx(swap_txs: [], tx_repo: TxRepo):
     for tx in swap_txs:
-        tx_repo.set(tx)
+        pprint(tx)
+        tx_repo.set(tx, key=None)
 
 
 def categorize_transaction(chain_data: [], txs_per_chain: dict):
@@ -37,7 +41,7 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
                 pass
 
 
-def analyze_logs_per_tx(w3: Web3, logs) -> dict:
+def analyze_logs_per_tx(w3: Web3, logs, account_address) -> dict:
     src_dst_per_token_contract = {}
     for log in logs:
 
@@ -54,7 +58,9 @@ def analyze_logs_per_tx(w3: Web3, logs) -> dict:
                     account_address) and int(log['topics'][1].hex(), 16) != zero_address:
                 src_dst_per_token_contract[log['address']] = {'to': True, 'amount': amount}
 
-        elif event_sig_hash == deposit_event_sig_hash:
-            src_dst_per_token_contract[log['address']] = {'amount': amount}
+        if event_sig_hash == deposit_event_sig_hash:
+            src_dst_per_token_contract[log['address']] = {'deposit': True, 'amount': amount}
+        if event_sig_hash == withdrawal_event_sig_hash:
+            src_dst_per_token_contract[log['address']] = {'withdrawal': True, 'amount': amount}
 
     return src_dst_per_token_contract

@@ -1,10 +1,42 @@
 from web3 import Web3
 from web3.exceptions import ABIFunctionNotFound
 
-from consts import account_address, chain_data
+from consts import chain_data
 from contract.checking_proxy_contract import is_eip1967_proxy
 from contract.get_contract_detail import get_contract_abi, get_contract_name
+from swap_enum import swap
 from transaction.internal_txs import get_internal_txs_by_hash
+
+
+# def categorize_swap(src_dst: dict) -> list | None:
+#     swaps = []
+#     from_exist = to_exist = internal = False
+#     from_count = 0
+#
+#     for inner_dict in src_dst.values():
+#         if 'from' in inner_dict:
+#             from_exist = True
+#             from_count += 1
+#         elif 'to' in inner_dict:
+#             to_exist = True
+#         else:
+#             internal = True
+#
+#     if from_exist and to_exist:
+#         swaps.extend(from_count * [swap.ALT_TO_ALT])
+#
+#     elif not from_exist:
+#         swaps.append(swap.ETH_TO_ALT)
+#
+#     elif not to_exist:
+#         swaps.extend(from_count * [swap.ALT_TO_ETH])
+#
+#     elif internal and from_count >= 1:
+#
+#         if to_exist:
+#             swaps.append(swap.ETH_TO_ALT)
+#
+#     return swaps
 
 
 def specify_swap_data(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):

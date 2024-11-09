@@ -2,12 +2,11 @@ from pprint import pprint
 
 from web3 import Web3
 
-from consts import account_address
 from transaction.nft_transfer_txs import get_nft_transfer_txs_by_address
 from transaction.normal_txs import get_normal_txs_by_address
 
 
-def fetch_txs_per_chain(chain_data: dict, settings) -> dict:
+def fetch_txs_per_chain(chain_data: dict, account_addr) -> dict:
     try:
         tx_per_chain = {}
         for chain in chain_data:
@@ -16,7 +15,7 @@ def fetch_txs_per_chain(chain_data: dict, settings) -> dict:
             api_key = chain['api_key']
             api_endpoint = chain['api_endpoint']
 
-            txs = get_normal_txs_by_address(account_address=w3.to_checksum_address(account_address),
+            txs = get_normal_txs_by_address(account_address=w3.to_checksum_address(account_addr),
                                             endpoint=api_endpoint,
                                             api_key=api_key)
             # nft_transfer_txs = get_nft_transfer_txs_by_address(
