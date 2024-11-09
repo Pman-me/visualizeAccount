@@ -6,6 +6,7 @@ from web3 import Web3
 from consts import chain_data
 from contract.checking_proxy_contract import is_eip1967_proxy, check_unstructured_proxy
 from contract.get_contract_detail import get_contract_abi
+from db import SQLBASE, engine
 from save_data import save_tx_data, get_tx_data
 from settings import Settings
 from transaction.analyze_transaction_type import categorize_transaction
@@ -16,7 +17,7 @@ def main():
 
     # txs = fetch_txs_per_chain(chain_data, settings)
     # save_tx_data(settings, parse_required_tx_data(txs))
-
+    SQLBASE.metadata.create_all(bind=engine)
     categorize_transaction(chain_data, fetch_txs_per_chain(chain_data, Settings()))
 
     # w3 = Web3(Web3.HTTPProvider(chain_data[0]['rpc']))
