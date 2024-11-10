@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, Integer, Float
+from sqlalchemy import Column, String, ForeignKey, DateTime, Integer, Float, Date
 
 from models.base_model import BaseModel
 
@@ -15,7 +15,7 @@ class TransactionModel(BaseModel):
     call_data = Column(String())
     fee = Column(Float)
     nonce = Column(Integer)
-    timestamp = Column(DateTime(timezone=False))
+    date_time = Column(String())
     chain = Column(String())
-    tx_type = Column(String())
-    bridge_id = Column(Integer, ForeignKey('bridge.id', ondelete='cascade', onupdate='cascade'), nullable=True)
+    type = Column(String())
+    # bridge_id = Column(Integer, ForeignKey('bridge.id', ondelete='cascade', onupdate='cascade'), nullable=True)

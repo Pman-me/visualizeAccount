@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import select, exc, insert, delete, update, values
@@ -35,11 +36,12 @@ class TxRepo(BasePSQLRepo):
                 to_contract_name=data['to_contract_name'],
                 send=data['send'],
                 recv=data['recv'],
-                call_data=data['input'],
-                tx_fee=data['fee'],
+                call_data="data['input']",
+                fee=data['fee'],
                 nonce=data['nonce'],
-                timestamp=data['timeStamp'],
-                chain=data['chain']
+                date_time=datetime.fromtimestamp(int(data['timeStamp'])).strftime("%b-%d-%Y %I:%M:%S %p %Z"),
+                chain=data['chain'],
+                type=data['type']
             )
             self.session.execute(stmt)
             self.session.commit()

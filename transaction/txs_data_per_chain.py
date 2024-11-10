@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from web3 import Web3
 
 from transaction.nft_transfer_txs import get_nft_transfer_txs_by_address

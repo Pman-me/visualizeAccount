@@ -4,6 +4,7 @@ from web3.exceptions import ABIFunctionNotFound
 from consts import chain_data
 from contract.checking_proxy_contract import is_eip1967_proxy
 from contract.get_contract_detail import get_contract_abi, get_contract_name
+from tx_enum import TxType
 
 
 def process_swap_tx(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):
@@ -28,7 +29,7 @@ def process_swap_tx(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):
                 continue
 
             if value.get('from') or value.get('deposit'):
-                send += f'{amount} {currency}' if not send else f' {amount} {currency}, '
+                send += f'{amount} {currency}' if not send else f', {amount} {currency}'
             elif value.get('to') or value.get('withdrawal'):
                 recv = f'{amount} {currency}'
 
@@ -44,6 +45,7 @@ def process_swap_tx(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):
             'nonce': tx['nonce'],
             'timeStamp': tx['timeStamp'],
             'fee': f"{w3.from_wei((int(tx['gasUsed']) * int(tx['gasPrice']) + int(l1_fee, 16)), 'ether'):.10f}",
-            'chain': next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None)
+            'chain': next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None),
+            'type': TxType.SWAP.value
         })
     return swap_txs

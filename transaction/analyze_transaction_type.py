@@ -6,7 +6,7 @@ from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address
     withdrawal_event_sig_hash
 from db.sesstion import get_db_session
 from repository.tx_repo import TxRepo
-from transaction.categorize_swap import process_swap_tx
+from transaction.process_swap import process_swap_tx
 
 
 def save_tx(swap_txs: [], tx_repo: TxRepo):
