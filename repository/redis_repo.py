@@ -8,10 +8,18 @@ class RedisRepo(BaseRepo):
         self.client = redis.Redis(host=host, port=port)
 
     def get(self, key: str):
-        data = self.client.get(key)
+        return self.client.get(key)
+
+    def get_list(self, key: str):
+        return self.client.lrange(key, 0, -1)
 
     def set(self, key: str, value):
-        self.client.set(key, value)
+        try:
+            if isinstance(value, list):
+                for item in value:
+                    self.client.lpush(key, str(item))
+        except Exception as err:
+            pass
 
     def delete(self, key: str) -> None:
         self.client.delete(key)

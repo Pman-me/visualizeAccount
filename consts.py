@@ -1,6 +1,7 @@
 from settings import Settings
 
 settings = Settings()
+account_address = settings.ACCOUNT_ADDRESS
 
 chain_rpcs = {
     'base': ['https://mainnet.base.org']

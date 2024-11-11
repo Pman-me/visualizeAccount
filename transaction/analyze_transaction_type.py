@@ -1,21 +1,20 @@
-from pprint import pprint
-
 from web3 import Web3
 
 from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address, \
-    withdrawal_event_sig_hash
+    withdrawal_event_sig_hash, settings, account_address
 from db.sesstion import get_db_session
+from repository.redis_repo import RedisRepo
 from repository.tx_repo import TxRepo
 from transaction.process_swap import process_swap_tx
 
 
 def save_tx(swap_txs: [], tx_repo: TxRepo):
     for tx in swap_txs:
-        pprint(tx)
         tx_repo.set(tx, key=None)
 
 
-def categorize_transaction(chain_data: [], txs_per_chain: dict, account_address):
+def categorize_transaction(chain_data: [], txs_per_chain: dict):
+    TxRepo(session=get_db_session())
     for chain_id, txs in txs_per_chain.items():
 
         chain = next((chain for chain in chain_data if chain['chain_id'] == chain_id), None)
@@ -28,7 +27,7 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict, account_address)
             tx_receipt = w3.eth.get_transaction_receipt(tx['hash'])
             if logs := tx_receipt['logs']:
                 # fetch src & dst per token transfer in transaction
-                src_dst_per_token_contract = analyze_logs_per_tx(w3, logs, account_address)
+                src_dst_per_token_contract = analyze_logs_per_tx(w3, logs)
                 # find swap type
                 if src_dst_per_token_contract:
                     swap_txs = process_swap_tx(w3, api_endpoint=api_endpoint, api_key=api_key,
@@ -40,8 +39,10 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict, account_address)
             else:
                 pass
 
+    # RedisRepo(settings.REDIS_HOST, settings.REDIS_PORT).set('max_nonce_per_chain', TxRepo(session=get_db_session()).get_max_nonce_per_chain())
 
-def analyze_logs_per_tx(w3: Web3, logs, account_address) -> dict:
+
+def analyze_logs_per_tx(w3: Web3, logs) -> dict:
     src_dst_per_token_contract = {}
     for log in logs:
 

@@ -12,7 +12,6 @@ class TransactionModel(BaseModel):
     to_contract_name = Column(String(42))
     send = Column(String())
     recv = Column(String())
-    call_data = Column(String())
     fee = Column(Float)
     nonce = Column(Integer)
     date_time = Column(String())

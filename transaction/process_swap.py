@@ -39,7 +39,6 @@ def process_swap_tx(w3: Web3, *, api_endpoint, api_key, data: dict, tx, l1_fee):
             'from': tx['from'],
             'to_contract_name': get_contract_name(api_key=api_key, api_endpoint=api_endpoint,
                                                   contract_address=tx['to']),
-            'input': tx['input'],
             'send': send,
             'recv': recv,
             'nonce': tx['nonce'],
