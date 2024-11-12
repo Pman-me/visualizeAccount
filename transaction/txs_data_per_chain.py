@@ -2,7 +2,7 @@ import ast
 
 from web3 import Web3
 
-from consts import account_address, settings
+from consts import account_address, settings, chain_data
 from repository.redis_repo import RedisRepo
 from transaction.nft_transfer_txs import get_nft_transfer_txs_by_address
 from transaction.normal_txs import get_normal_txs_by_address
@@ -20,7 +20,7 @@ def fetch_txs_per_chain(chain_data: dict) -> dict:
             txs = get_normal_txs_by_address(account_address=w3.to_checksum_address(account_address),
                                             endpoint=api_endpoint,
                                             api_key=api_key)
-            if check_max_nonce_exists(w3, txs):
+            if (txs := check_max_nonce_exists(w3, txs)) is not None:
                 tx_per_chain[w3.eth.chain_id] = txs
         return tx_per_chain
     except Exception as e:
@@ -34,11 +34,9 @@ def check_max_nonce_exists(w3, txs):
 
         for item in max_nonce_per_chain:
             item = ast.literal_eval(item.decode('utf-8'))
-            if item[0] == w3.eth.chain_id:
+            if item[0] == next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None):
                 if max_nonce <= item[1]:
-                    return False
+                    return None
                 else:
-                    for tx in txs:
-                        if tx['nonce'] < item[1]:
-                            txs.remove(tx)
-    return True
+                    txs = list(filter(lambda tx: int(tx['nonce']) > item[1], txs))
+    return txs

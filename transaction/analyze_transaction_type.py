@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from web3 import Web3
 
 from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address, \
@@ -14,7 +16,6 @@ def save_tx(swap_txs: [], tx_repo: TxRepo):
 
 
 def categorize_transaction(chain_data: [], txs_per_chain: dict):
-    TxRepo(session=get_db_session())
     for chain_id, txs in txs_per_chain.items():
 
         chain = next((chain for chain in chain_data if chain['chain_id'] == chain_id), None)
