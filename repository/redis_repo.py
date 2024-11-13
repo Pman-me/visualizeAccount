@@ -1,3 +1,5 @@
+from typing import Optional
+
 import redis
 
 from repository.base_repo import BaseRepo
@@ -10,16 +12,18 @@ class RedisRepo(BaseRepo):
     def get(self, key: str):
         return self.client.get(key)
 
-    def get_list(self, key: str):
-        return self.client.lrange(key, 0, -1)
+    def get_hash(self, hash_name: str):
+        return self.client.hgetall(hash_name)
 
-    def set(self, key: str, value):
+    def set_hash(self, hash_name: str, values):
         try:
-            if isinstance(value, list):
-                for item in value:
-                    self.client.lpush(key, str(item))
+            for field, value in values:
+                self.client.hset(hash_name, field, value)
         except Exception as err:
             pass
+
+    def set(self, data: dict, /, key: Optional[str],):
+        pass
 
     def delete(self, key: str) -> None:
         self.client.delete(key)

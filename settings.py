@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     ACCOUNT_ADDRESS: Optional[str]
     BASE_API_KEY: Optional[str]
     SCROLL_API_KEY: Optional[str]
+    LINEA_API_KEY: Optional[str]
     REDIS_HOST: Optional[str]
     REDIS_PORT: Optional[str]
     REDIS_PASS: Optional[str]

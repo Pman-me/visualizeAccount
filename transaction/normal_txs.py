@@ -10,8 +10,6 @@ def get_normal_txs_by_address(account_address: str, endpoint: str, api_key: str)
         'endblock': 99999999,
         'sort': 'asc',
         'apikey': api_key,
-        # 'page': 1,
-        # 'offset': 10
     }
     data = requests.get(endpoint, params=params).json()
     if data['status'] == '1':
