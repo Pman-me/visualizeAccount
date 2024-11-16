@@ -1,4 +1,5 @@
 import ast
+from pprint import pprint
 
 from web3 import Web3
 
@@ -7,9 +8,9 @@ from repository.redis_repo import RedisRepo
 from transaction.normal_txs import get_normal_txs_by_address
 
 
-def fetch_txs_per_chain(chain_data: dict) -> dict:
+def fetch_txs_per_chain() -> dict:
     try:
-        tx_per_chain = {}
+        txs_per_chain = {}
         for chain in chain_data:
 
             w3 = Web3(Web3.HTTPProvider(chain['rpc']))
@@ -20,8 +21,8 @@ def fetch_txs_per_chain(chain_data: dict) -> dict:
                                             endpoint=api_endpoint,
                                             api_key=api_key)
             if (txs := filter_txs_by_max_nonce(w3, txs)) is not None:
-                tx_per_chain[w3.eth.chain_id] = txs
-        return tx_per_chain
+                txs_per_chain[w3.eth.chain_id] = txs
+        return txs_per_chain
     except Exception as e:
         pass
 
