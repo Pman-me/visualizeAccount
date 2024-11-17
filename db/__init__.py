@@ -11,6 +11,6 @@ class SQLBASE(DeclarativeBase, MappedAsDataclass):
 
 try:
     engine = create_engine(Settings().DATABASE_URL)
-    Session = sessionmaker(autoflush=False, autocommint=False, bind=engine)
+    Session = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 except OperationalError as err:
     pass
