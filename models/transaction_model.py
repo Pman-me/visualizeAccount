@@ -17,4 +17,4 @@ class TransactionModel(BaseModel):
     date_time = Column(String())
     chain = Column(String())
     type = Column(String())
-    # bridge_id = Column(Integer, ForeignKey('bridge.id', ondelete='cascade', onupdate='cascade'), nullable=True)
+    bridge_id = Column(Integer, nullable=True)

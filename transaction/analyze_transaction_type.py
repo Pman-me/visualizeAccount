@@ -22,13 +22,13 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
         api_endpoint = chain['api_endpoint']
         try:
             for tx in txs:
-                should_save = False
                 tx_receipt = w3.eth.get_transaction_receipt(tx['hash'])
                 logs = tx_receipt['logs']
+                should_save = False
                 send = recv = tx_type = ''
 
                 # fetch src & dst per token transfer in transaction
-                src_dst_per_token_contract = analyze_logs_per_tx(w3, logs)
+                src_dst_per_token_contract = process_token_transfer_logs(w3, logs)
 
                 if check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
                     send, recv = process_transfer_tx(w3, api_endpoint, api_key, tx, src_dst_per_token_contract)
@@ -41,14 +41,14 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
                                                  data=src_dst_per_token_contract)
                     should_save = True
                 if not logs or len(src_dst_per_token_contract) == 1:
-                    # May be bridge
-                    pass
+                    tx_type = TxType.BRIDGE
+
                 if should_save:
                     save_tx(transform_tx_data(w3, api_endpoint, api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
                                               tx_type=tx_type,
                                               send=send, recv=recv), tx_repo=TxRepo(session=get_db_session()))
         except (Exception, ValueError) as err:
-            print(err, tx)
+            pass
         finally:
             RedisRepo(settings.REDIS_HOST, settings.REDIS_PORT).set_hash('max_nonce_per_chain',
                                                                          TxRepo(
@@ -56,19 +56,23 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
 
 
 def check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
-    """To check the transfer of native coins
-        It checks that the destination exists,
-        if not, it means the contract deployment transaction
+    """
+    To check the transfer of native coins
+    It checks that the destination exists,
+    if not, it means the contract deployment transaction
 
-        It checks if the number of transactions of the src and dst wallet addresses is less than a certain value,
-        and if it is more, it means that the wallet address is related to a platform(bridge, dex, ...)."""
+    It checks if the number of transactions of the src and dst wallet addresses is less than a certain value,
+    and if it is more, it means that the wallet address is related to a platform(bridge, dex, ...)."""
     return ((tx['to'] and is_account_address(w3, tx['from']) and is_account_address(w3, tx[
         'to']) and not logs and w3.eth.get_transaction_count(
         w3.to_checksum_address(tx['from'])) < 20000 and w3.eth.get_transaction_count(
         w3.to_checksum_address(tx['to'])) < 20000) or (src_dst_per_token_contract and (len(logs) == 1)))
 
 
-def analyze_logs_per_tx(w3: Web3, logs) -> dict:
+def process_token_transfer_logs(w3: Web3, logs) -> dict:
+    """
+    Processing token transfer logs and map logs details to transferred token address
+    """
     src_dst_per_token_contract = {}
     if logs:
         for log in logs:
