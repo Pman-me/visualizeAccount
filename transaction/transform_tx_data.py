@@ -7,7 +7,7 @@ def transform_tx_data(w3, api_endpoint: str, api_key: str, *, l1_fee: str, tx: d
                       recv=None):
     return {
         'hash': tx['hash'],
-        'from': tx['from'],
+        'wallet': tx['from'],
         'to_contract_name': get_contract_name(api_key=api_key, api_endpoint=api_endpoint,
                                               contract_address=tx['to']),
         'send': send,
