@@ -28,25 +28,24 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
                 should_save = False
                 send = recv = tx_type = ''
 
-                # fetch src & dst per token transfer in transaction
-                src_dst_per_token_contract = process_token_transfer_logs(w3, logs)
+                tx_summary = process_token_transfer_logs(w3, logs)
 
-                if check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
+                if check_if_transfer_tx(w3, tx, logs, tx_summary):
                     should_save = True
                     tx_type = TxType.TRANSFER.value
-                    send, recv = process_transfer_tx(w3, api_endpoint, api_key, tx, src_dst_per_token_contract)
+                    send, recv = process_transfer_tx(w3, api_endpoint, api_key, tx, tx_summary)
 
-                if len(src_dst_per_token_contract.values()) >= 2:
+                if len(tx_summary.values()) >= 2:
                     should_save = True
                     tx_type = TxType.SWAP.value
                     send, recv = process_swap_tx(w3, api_endpoint=api_endpoint, api_key=api_key,
-                                                 tx_summary=src_dst_per_token_contract)
+                                                 tx_summary=tx_summary)
 
-                if check_if_bridge_tx(w3, tx, logs, src_dst_per_token_contract):
+                if check_if_bridge_tx(w3, tx, logs, tx_summary):
                     should_save = True
                     tx_type = TxType.BRIDGE.value
                     send, recv = process_bridge_tx(w3, api_endpoint=api_endpoint, api_key=api_key, tx=tx,
-                                                   tx_summary=src_dst_per_token_contract)
+                                                   tx_summary=tx_summary)
 
                 if should_save:
                     save_tx(transform_tx_data(w3, api_endpoint, api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
