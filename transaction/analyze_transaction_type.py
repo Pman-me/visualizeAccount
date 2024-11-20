@@ -6,6 +6,7 @@ from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address
 from db.sesstion import get_db_session
 from repository.redis_repo import RedisRepo
 from repository.tx_repo import TxRepo
+from transaction.process_bridge import process_bridge_tx, check_if_bridge_tx
 from transaction.process_swap import process_swap_tx
 from transaction.process_transfer import process_transfer_tx
 from transaction.save_tx import save_tx
@@ -31,17 +32,21 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
                 src_dst_per_token_contract = process_token_transfer_logs(w3, logs)
 
                 if check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
-                    send, recv = process_transfer_tx(w3, api_endpoint, api_key, tx, src_dst_per_token_contract)
-                    tx_type = TxType.TRANSFER.value
                     should_save = True
+                    tx_type = TxType.TRANSFER.value
+                    send, recv = process_transfer_tx(w3, api_endpoint, api_key, tx, src_dst_per_token_contract)
 
                 if len(src_dst_per_token_contract.values()) >= 2:
+                    should_save = True
                     tx_type = TxType.SWAP.value
                     send, recv = process_swap_tx(w3, api_endpoint=api_endpoint, api_key=api_key,
-                                                 data=src_dst_per_token_contract)
+                                                 tx_summary=src_dst_per_token_contract)
+
+                if check_if_bridge_tx(w3, tx, logs, src_dst_per_token_contract):
                     should_save = True
-                if not logs or len(src_dst_per_token_contract) == 1:
-                    tx_type = TxType.BRIDGE
+                    tx_type = TxType.BRIDGE.value
+                    send, recv = process_bridge_tx(w3, api_endpoint=api_endpoint, api_key=api_key, tx=tx,
+                                                   tx_summary=src_dst_per_token_contract)
 
                 if should_save:
                     save_tx(transform_tx_data(w3, api_endpoint, api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,

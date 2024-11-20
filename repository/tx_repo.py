@@ -5,6 +5,7 @@ from sqlalchemy import select, exc, insert, delete, func
 
 from models.transaction_model import TransactionModel
 from repository.base_psql_repo import BasePSQLRepo
+from tx_enum import TxType
 
 
 class TxRepo(BasePSQLRepo):
