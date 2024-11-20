@@ -16,7 +16,7 @@ def fetch_txs_per_chain() -> dict:
             api_key = chain['api_key']
             api_endpoint = chain['api_endpoint']
 
-            txs = list(filter(lambda tx: tx['isError'] == 0,
+            txs = list(filter(lambda tx: tx['isError'] == "0",
                               get_normal_txs_by_address(account_address=w3.to_checksum_address(account_address),
                                                         endpoint=api_endpoint,
                                                         api_key=api_key)))
