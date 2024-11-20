@@ -1,5 +1,4 @@
 import ast
-from pprint import pprint
 
 from web3 import Web3
 
@@ -17,9 +16,10 @@ def fetch_txs_per_chain() -> dict:
             api_key = chain['api_key']
             api_endpoint = chain['api_endpoint']
 
-            txs = get_normal_txs_by_address(account_address=w3.to_checksum_address(account_address),
-                                            endpoint=api_endpoint,
-                                            api_key=api_key)
+            txs = list(filter(lambda tx: tx['isError'] == 0,
+                              get_normal_txs_by_address(account_address=w3.to_checksum_address(account_address),
+                                                        endpoint=api_endpoint,
+                                                        api_key=api_key)))
             if (txs := filter_txs_by_max_nonce(w3, txs)) is not None:
                 txs_per_chain[w3.eth.chain_id] = txs
         return txs_per_chain
@@ -36,7 +36,8 @@ def filter_txs_by_max_nonce(w3, txs):
         for key, value in max_nonce_per_chain.items():
             value = ast.literal_eval(value.decode('utf-8'))
 
-            if key.decode('utf-8') == next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None):
+            if key.decode('utf-8') == next(
+                    (item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None):
                 if max_nonce <= value:
                     return None
                 else:
