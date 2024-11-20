@@ -8,7 +8,7 @@ from repository.redis_repo import RedisRepo
 from repository.tx_repo import TxRepo
 from transaction.process_bridge import process_bridge_tx, check_if_bridge_tx
 from transaction.process_swap import process_swap_tx
-from transaction.process_transfer import process_transfer_tx
+from transaction.process_transfer import process_transfer_tx, check_if_transfer_tx
 from transaction.save_tx import save_tx
 from transaction.transform_tx_data import transform_tx_data
 from tx_enum import TxType
@@ -57,20 +57,6 @@ def categorize_transaction(chain_data: [], txs_per_chain: dict):
             RedisRepo(settings.REDIS_HOST, settings.REDIS_PORT).set_hash('max_nonce_per_chain',
                                                                          TxRepo(
                                                                              session=get_db_session()).get_max_nonce_per_chain())
-
-
-def check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
-    """
-    To check the transfer of native coins
-    It checks that the destination exists,
-    if not, it means the contract deployment transaction
-
-    It checks if the number of transactions of the src and dst wallet addresses is less than a certain value,
-    and if it is more, it means that the wallet address is related to a platform(bridge, dex, ...)."""
-    return ((tx['to'] and is_account_address(w3, tx['from']) and is_account_address(w3, tx[
-        'to']) and not logs and w3.eth.get_transaction_count(
-        w3.to_checksum_address(tx['from'])) < 20000 and w3.eth.get_transaction_count(
-        w3.to_checksum_address(tx['to'])) < 20000) or (src_dst_per_token_contract and (len(logs) == 1)))
 
 
 def process_token_transfer_logs(w3: Web3, logs) -> dict:
