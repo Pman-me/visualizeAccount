@@ -8,10 +8,11 @@ def process_bridge_tx(w3, api_endpoint, api_key, tx, tx_summary: dict):
     if tx_summary:
         for token_contract_address, value in tx_summary.items():
             amount, currency = get_token_details(w3, api_endpoint, api_key, token_contract_address, value)
-            if value.get('from') or value.get():
-                send = f"{amount} {currency}"
-            if value.get('to'):
-                recv = f"{amount} {currency}"
+            if amount is not None and currency is not None:
+                if value.get('from') or value.get('deposit'):
+                    send = f"{amount} {currency}"
+                if value.get('to') or value.get('withdrawal'):
+                    recv = f"{amount} {currency}"
     else:
         if w3.to_checksum_address(tx['from']) == w3.to_checksum_address(account_address):
             send = f"{float(tx['value']) / 10 ** 18} ETH"
