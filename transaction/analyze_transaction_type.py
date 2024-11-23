@@ -1,6 +1,6 @@
 from web3 import Web3
 
-from consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address, \
+from common.consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address, \
     withdrawal_event_sig_hash, settings, account_address
 from db.sesstion import get_db_session
 from repository.redis_repo import RedisRepo
@@ -10,7 +10,7 @@ from transaction.process_swap import process_swap_tx
 from transaction.process_transfer import process_transfer_tx, check_if_transfer_tx
 from transaction.save_tx import save_tx
 from transaction.transform_tx_data import transform_tx_data
-from tx_enum import TxType
+from common.tx_enum import TxType
 
 
 def categorize_transaction(chain_data: [], txs_per_chain: dict):

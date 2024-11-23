@@ -1,5 +1,5 @@
-from check_address_type import is_account_address
-from consts import account_address
+from common.check_address_type import is_account_address
+from common.consts import account_address
 from contract.get_token_detail import get_token_details
 
 

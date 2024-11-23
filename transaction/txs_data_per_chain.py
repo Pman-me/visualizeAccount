@@ -2,7 +2,7 @@ import ast
 
 from web3 import Web3
 
-from consts import account_address, settings, chain_data
+from common.consts import account_address, settings, chain_data
 from repository.redis_repo import RedisRepo
 from transaction.normal_txs import get_normal_txs_by_address
 

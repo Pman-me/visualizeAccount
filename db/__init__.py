@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import MappedAsDataclass, DeclarativeBase, sessionmaker
 
-from settings import Settings
+from common.settings import Settings
 
 
 class SQLBASE(DeclarativeBase, MappedAsDataclass):

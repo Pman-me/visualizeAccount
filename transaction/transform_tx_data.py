@@ -1,6 +1,6 @@
-from consts import chain_data
+from common.consts import chain_data
 from contract.get_contract_detail import get_contract_name
-from tx_enum import TxType
+from common.tx_enum import TxType
 
 
 def transform_tx_data(w3, api_endpoint: str, api_key: str, *, l1_fee: str, tx: dict, tx_type: TxType, send=None,
