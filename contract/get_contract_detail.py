@@ -1,11 +1,10 @@
-import binascii
 import json
 from functools import lru_cache
 
 import requests
 from web3 import Web3
 
-from check_response_status import check_response_status
+from common.check_response_status import check_response_status
 from contract.checking_proxy_contract import is_eip1967_proxy, check_unstructured_proxy
 
 

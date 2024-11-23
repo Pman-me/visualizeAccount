@@ -3,7 +3,7 @@ from web3 import Web3
 from contract.get_contract_detail import check_contract_address, get_contract_abi
 
 
-def decode_tx_input_data(w3: Web3, tx, *, api_key: str, api_endpoint: str, ):
+def decode_tx_input_data(w3: Web3, *, api_key: str, api_endpoint: str,  tx):
     try:
         contract_address = check_contract_address(tx['to'], w3)
 

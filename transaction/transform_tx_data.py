@@ -1,12 +1,13 @@
-from consts import chain_data
+from common.consts import chain_data
 from contract.get_contract_detail import get_contract_name
-from tx_enum import TxType
+from common.tx_enum import TxType
 
 
-def transform_tx_data(w3, api_endpoint, api_key, *, l1_fee, tx, tx_type: TxType, send=None, recv=None):
+def transform_tx_data(w3, api_endpoint: str, api_key: str, *, l1_fee: str, tx: dict, tx_type: TxType, send=None,
+                      recv=None):
     return {
         'hash': tx['hash'],
-        'from': tx['from'],
+        'wallet': tx['from'],
         'to_contract_name': get_contract_name(api_key=api_key, api_endpoint=api_endpoint,
                                               contract_address=tx['to']),
         'send': send,

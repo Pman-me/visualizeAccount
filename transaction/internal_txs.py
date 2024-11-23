@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from check_response_status import check_response_status
+from common.check_response_status import check_response_status
 
 
 def get_internal_txs_by_hash(*, api_endpoint: str, api_key: str, tx_hash: str):

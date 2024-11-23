@@ -19,7 +19,7 @@ class TxRepo(BasePSQLRepo):
         try:
             values = {
                 'hash': data['hash'],
-                'from_address': data['from'],
+                'wallet': data['wallet'],
                 'to_contract_name': data['to_contract_name'],
                 'send': data['send'],
                 'recv': data['recv'],
