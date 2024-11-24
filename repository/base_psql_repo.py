@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from db.sesstion import get_db_session
+from rdbms_utils.sesstion import get_db_session
 from repository.base_repo import BaseRepo
 
 

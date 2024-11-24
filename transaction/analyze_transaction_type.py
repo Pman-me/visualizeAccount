@@ -2,7 +2,7 @@ from web3 import Web3
 
 from common.consts import transfer_event_sig_hash, deposit_event_sig_hash, zero_address, \
     withdrawal_event_sig_hash, settings, account_address
-from db.sesstion import get_db_session
+from rdbms_utils.sesstion import get_db_session
 from repository.redis_repo import RedisRepo
 from repository.tx_repo import TxRepo
 from transaction.process_bridge import process_bridge_tx, check_if_bridge_tx
