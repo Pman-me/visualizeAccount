@@ -1,4 +1,4 @@
-from rdbms_utils import SQLBASE
+from rdbms_utils.sql_base import SQLBASE
 
 
 class BaseModel(SQLBASE):

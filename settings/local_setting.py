@@ -1,0 +1,11 @@
+# Database Settings
+RDBMS_USER = ''
+RDBMS_PASSWORD = ''
+RDBMS_HOST = ''
+RDBMS_PORT = 5432
+RDBMS_DB = ''
+
+# Redis Settings
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+MAIN_REDIS_DB = 0
