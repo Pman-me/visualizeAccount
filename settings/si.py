@@ -1,8 +1,9 @@
 import os
 from decimal import Decimal
 
-from settings.env_settings import EnvSettings
+from dotenv import load_dotenv
 
+load_dotenv()
 
 # Database Settings
 RDBMS_USER = ''
@@ -18,7 +19,7 @@ MAIN_REDIS_DB = 0
 
 # Addresses And Events Sig Hash
 ZERO_ADDRESS = 0x0000000000000000000000000000000000000000
-AccountAddress = 0xd0C57a1bc1f291d2c2Fef2bf70D48A7F5a9aD00D
+AccountAddress = ''
 TRANSFER_EVENT_SIG_HASH = 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
 DEPOSIT_EVENT_SIG_HASH = 0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c
 WITHDRAWAL_EVENT_SIG_HASH = 0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65
@@ -33,8 +34,8 @@ BASE_API_KEY = os.getenv('BASE_API_KEY')
 SCROLL_API_KEY = os.getenv('SCROLL_API_KEY')
 
 # Chain Detail
-settings = EnvSettings()
-account_address = settings.ACCOUNT_ADDRESS
+# settings = EnvSettings()
+# account_address = settings.ACCOUNT_ADDRESS
 
 CHAIN_DATA = [
     {'chain': 'base', 'chain_id': 8453, 'rpc': 'https://mainnet.base.org', 'api_url': 'https://api.basescan.org/api',

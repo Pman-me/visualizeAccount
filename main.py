@@ -2,7 +2,8 @@ from rdbms_utils.create_db import create_db
 from rdbms_utils.engine import get_db_engine
 from rdbms_utils.sesstion import get_db_session
 from repository.tx_repo import TxRepo
-from settings.si import AccountAddress, CHAIN_DATA
+from settings import AccountAddress
+from settings.si import CHAIN_DATA
 from transaction.analyze_tx_type import process_tx
 from transaction.txs_data_per_chain import fetch_txs_per_chain
 

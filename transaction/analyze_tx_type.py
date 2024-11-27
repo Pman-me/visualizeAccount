@@ -1,8 +1,6 @@
-from linecache import cache
-
 from web3 import Web3
 
-
+from common.tx_enum import TxType
 from repository.tx_repo import TxRepo
 from settings.si import TRANSFER_EVENT_SIG_HASH, ZERO_ADDRESS, DEPOSIT_EVENT_SIG_HASH, \
     WITHDRAWAL_EVENT_SIG_HASH
@@ -11,20 +9,20 @@ from transaction.process_swap import process_swap_tx
 from transaction.process_transfer import process_transfer_tx, check_if_transfer_tx
 from transaction.save_tx import save_tx
 from transaction.transform_tx_data import transform_tx_data
-from common.tx_enum import TxType
 
 
-def process_tx(chain_data: [], txs_per_chain: dict, account_address: int, tx_repo: TxRepo):
+def process_tx(chain_data: [], txs_per_chain: dict, account_address: str, tx_repo: TxRepo):
     for chain_id, txs in txs_per_chain.items():
         chain = next((chain for chain in chain_data if chain['chain_id'] == chain_id), None)
 
         w3 = Web3(Web3.HTTPProvider(chain['rpc']))
         api_key = chain['api_key']
         api_url = chain['api_url']
-        categorize_tx(w3, txs=txs, api_url=api_url, api_key=api_key, tx_repo=tx_repo, account_address=account_address)
+        categorize_tx(w3, chain_data=chain_data, txs=txs, api_url=api_url, api_key=api_key, tx_repo=tx_repo,
+                      account_address=account_address)
 
 
-def categorize_tx(w3, *, txs, api_url, api_key, tx_repo, account_address):
+def categorize_tx(w3, *, chain_data, txs, api_url, api_key, tx_repo, account_address):
     try:
         for tx in txs:
             tx_receipt = w3.eth.get_transaction_receipt(tx['hash'])
@@ -54,7 +52,7 @@ def categorize_tx(w3, *, txs, api_url, api_key, tx_repo, account_address):
 
             if should_save:
                 save_tx(transform_tx_data(w3, api_url, api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
-                                          tx_type=tx_type,
+                                          tx_type=tx_type, chain_data=chain_data,
                                           send=send, recv=recv), tx_repo=tx_repo)
     except (Exception, ValueError) as err:
         pass

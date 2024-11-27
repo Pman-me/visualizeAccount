@@ -2,7 +2,7 @@ from contract.get_contract_detail import get_contract_name
 from common.tx_enum import TxType
 
 
-def transform_tx_data(w3, api_url: str, api_key: str, *, l1_fee: str, tx: dict, tx_type: TxType, send=None,
+def transform_tx_data(w3, api_url: str, api_key: str, *, l1_fee: str, tx: dict, tx_type: TxType, chain_data, send=None,
                       recv=None):
     return {
         'hash': tx['hash'],
