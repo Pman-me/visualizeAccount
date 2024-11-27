@@ -1,0 +1,11 @@
+RDBMS_USER = ''
+RDBMS_PASSWORD = ''
+RDBMS_HOST = ''
+RDBMS_PORT = 0
+RDBMS_DB = ''
+
+REDIS_HOST = ''
+REDIS_PORT = 0
+MAIN_REDIS_DB = 0
+
+AccountAddress = None

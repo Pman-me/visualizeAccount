@@ -1,0 +1,11 @@
+RDBMS_USER = 'user'
+RDBMS_PASSWORD = '123456789'
+RDBMS_HOST = '127.0.0.1'
+RDBMS_PORT = 5432
+RDBMS_DB = 'screener_db'
+
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+MAIN_REDIS_DB = 0
+
+AccountAddress = ''

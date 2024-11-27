@@ -1,8 +1,8 @@
-from db import Session
+from rdbms_utils.session_handler import db_Session
 
 
 def get_db_session():
-    session = Session()
+    session = db_Session()
     try:
         return session
     finally:
