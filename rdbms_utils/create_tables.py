@@ -1,4 +1,3 @@
-from rdbms_utils.engine import get_db_engine
 from rdbms_utils.sql_base import SQLBASE
 
 

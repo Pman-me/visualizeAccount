@@ -56,7 +56,7 @@ To execute the transaction processing system, run the following command:
 
 - **check_unstructured_proxy**: This function checks if a given contract address is an unstructured proxy by examining the storage at a specific slot (the implementation slot).
 
-- **is_eip1967_proxy**: This function checks if a given contract address is an EIP-1967 compliant proxy by checking specific storage slots for the implementation and beacon addresses.
+- **is_proxy**: This function checks if a given contract address is an EIP-1967 compliant proxy or Zeppelin proxy by checking specific storage slots for the implementation and beacon addresses.
 
 ### Contract Interaction
 
