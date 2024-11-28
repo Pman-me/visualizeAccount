@@ -4,14 +4,17 @@ from rdbms_utils.sesstion import get_db_session
 from repository.tx_repo import TxRepo
 from settings import AccountAddress
 from settings.si import CHAIN_DATA
-from transaction.analyze_tx_type import process_tx
-from transaction.txs_data_per_chain import fetch_txs_per_chain
+from transaction.fetch_and_process_txs import fetch_and_process_txs
+from utils.validate_address import validate_address
 
 
 def main():
+    validate_address(AccountAddress)
+
     create_db(get_db_engine())
     tx_repo = TxRepo(session=get_db_session())
-    process_tx(CHAIN_DATA, fetch_txs_per_chain(CHAIN_DATA, AccountAddress, tx_repo), AccountAddress, tx_repo)
+
+    fetch_and_process_txs(CHAIN_DATA, AccountAddress, tx_repo)
 
 
 if __name__ == '__main__':
