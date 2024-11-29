@@ -1,11 +1,11 @@
 from web3.exceptions import ABIFunctionNotFound
 
-from contract.checking_proxy_contract import is_eip1967_proxy
+from contract.checking_proxy_contract import is_proxy
 from contract.get_contract_detail import get_contract_abi
 
 
 def get_token_details(w3, api_url, api_key, token_contract_address, log_topics):
-    if contract_address := is_eip1967_proxy(w3, token_contract_address):
+    if contract_address := is_proxy(w3, token_contract_address):
         impl_contract_address = contract_address
     else:
         impl_contract_address = token_contract_address

@@ -9,7 +9,7 @@ def check_unstructured_proxy(w3: Web3, address: str):
     return None
 
 
-def is_eip1967_proxy(w3: Web3, contract_address):
+def is_proxy(w3: Web3, contract_address):
 
     # 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
     impl_slot = hex(int(w3.keccak(text='eip1967.proxy.implementation').hex(), 16) - 1)

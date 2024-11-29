@@ -5,7 +5,7 @@ import requests
 from web3 import Web3
 
 from common.check_response_status import check_response_status
-from contract.checking_proxy_contract import is_eip1967_proxy, check_unstructured_proxy
+from contract.checking_proxy_contract import is_proxy, check_unstructured_proxy
 
 
 @lru_cache(maxsize=None, typed=True)
@@ -47,7 +47,7 @@ def get_token_decimal(w3: Web3, *, api_url: str, api_key: str, contract_address)
 
 
 def check_contract_address(to_addr, w3):
-    if impl_address := is_eip1967_proxy(w3, to_addr):
+    if impl_address := is_proxy(w3, to_addr):
         contract_address = impl_address
     elif impl_address := check_unstructured_proxy(w3, to_addr):
         contract_address = impl_address
