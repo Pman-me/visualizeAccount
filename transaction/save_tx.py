@@ -1,4 +1,4 @@
-from repository.tx_repo import TxRepo
+from repositories.tx_repo import TxRepo
 
 
 def save_tx(tx, tx_repo: TxRepo):

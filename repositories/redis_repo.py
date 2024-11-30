@@ -2,7 +2,7 @@ from typing import Optional
 
 import redis
 
-from repository.base_repo import BaseRepo
+from repositories.base_repo import BaseRepo
 
 
 class RedisRepo(BaseRepo):

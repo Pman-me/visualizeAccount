@@ -23,4 +23,4 @@ def process_bridge_tx(w3, api_url, api_key, tx, tx_summary: dict, account_addres
 
 def check_if_bridge_tx(w3, tx, logs, tx_summary: dict):
     return ((not logs and (not is_account_address(w3, tx['from']) or not is_account_address(w3, tx['to']))) or
-            len(tx_summary) == 1) and tx['value'] != "0"
+            len(tx_summary) == 1) and tx['value'] != "0" if bool(tx['to']) else False

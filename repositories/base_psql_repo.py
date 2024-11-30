@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from rdbms_utils.sesstion import get_db_session
-from repository.base_repo import BaseRepo
+from repositories.base_repo import BaseRepo
 
 
 class BasePSQLRepo(BaseRepo):

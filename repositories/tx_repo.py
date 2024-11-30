@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import select, exc, insert, delete, func
 
 from models.transaction_model import TransactionModel
-from repository.base_psql_repo import BasePSQLRepo
+from repositories.base_psql_repo import BasePSQLRepo
 
 
 class TxRepo(BasePSQLRepo):
