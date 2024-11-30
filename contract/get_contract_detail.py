@@ -1,4 +1,5 @@
 import json
+import logging
 from functools import lru_cache
 
 import requests
@@ -18,7 +19,7 @@ def get_contract_abi(*, api_url: str, api_key: str, contract_address):
             return res['result']
         return None
     except requests.exceptions.RequestException as e:
-        pass
+        logging.exception("An error occurred: %s", e)
 
 
 def get_contract_name(*, api_url: str, api_key: str, contract_address):
@@ -29,7 +30,7 @@ def get_contract_name(*, api_url: str, api_key: str, contract_address):
             return res['result'][0]['ContractName']
         return None
     except requests.exceptions.RequestException as e:
-        pass
+        logging.exception("An error occurred: %s", e)
 
 
 def get_token_symbol(w3: Web3, *, api_url: str, api_key: str, contract_address):
