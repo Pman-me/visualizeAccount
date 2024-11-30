@@ -1,3 +1,5 @@
+import logging
+
 from web3.exceptions import ABIFunctionNotFound
 
 from contract.checking_proxy_contract import is_proxy
@@ -17,6 +19,6 @@ def get_token_details(w3, api_url, api_key, token_contract_address, log_topics):
             currency = token_contract.functions.symbol().call()
             return amount, currency
         except ABIFunctionNotFound as err:
-            print(f"Error for transaction: data: {log_topics}, ABIFunctionNotFound")
+            logging.exception("An error occurred: %s", err)
             return None, None
     return None, None

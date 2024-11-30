@@ -38,7 +38,7 @@ def categorize_tx(w3, *, chain_data, txs, api_url, api_key, tx_repo, account_add
                 save_tx(transform_tx_data(w3, api_url, api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
                                           tx_type=tx_type, chain_data=chain_data, account_address=account_address,
                                           send=send, recv=recv), tx_repo=tx_repo)
-    except (Exception, ValueError) as err:
+    except Exception as err:
         logging.exception("An error occurred: %s", err)
 
 
