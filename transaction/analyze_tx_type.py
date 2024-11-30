@@ -15,13 +15,14 @@ from transaction.transform_tx_data import transform_tx_data
 
 def process_tx(chain_data: [], txs_per_chain: dict, account_address: str, tx_repo: TxRepo):
     for chain_id, txs in txs_per_chain.items():
-
         chain = next((chain for chain in chain_data if chain['chain_id'] == chain_id), None)
 
-        w3 = Web3(Web3.HTTPProvider(chain['rpc']))
-        api_key = chain['api_key']
-        api_url = chain['api_url']
-        categorize_tx(w3, chain_data=chain_data, txs=txs, api_url=api_url, api_key=api_key, tx_repo=tx_repo,
+        categorize_tx(Web3(Web3.HTTPProvider(chain['rpc'])),
+                      chain_data=chain_data,
+                      txs=txs,
+                      api_url=chain['api_url'],
+                      api_key=chain['api_key'],
+                      tx_repo=tx_repo,
                       account_address=account_address)
 
 
