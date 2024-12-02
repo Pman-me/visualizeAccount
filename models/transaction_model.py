@@ -9,11 +9,11 @@ class TransactionModel(BaseModel):
 
     hash = Column(String(), primary_key=True)
     wallet = Column(String(42))
-    to_contract_name = Column(String(42))
+    to_contract_name = Column(String())
     send = Column(String())
     recv = Column(String())
     fee = Column(Float)
-    nonce = Column(Integer)
+    nonce = Column(String())
     date_time = Column(String())
     chain = Column(String())
     type = Column(String())

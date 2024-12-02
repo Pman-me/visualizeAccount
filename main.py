@@ -9,12 +9,10 @@ from utils.validate_address import validate_address
 
 
 def main():
+
     validate_address(AccountAddress)
-
     create_db(get_db_engine())
-    tx_repo = TxRepo(session=get_db_session())
-
-    fetch_and_process_txs(CHAIN_DATA, AccountAddress, tx_repo)
+    fetch_and_process_txs(CHAIN_DATA, AccountAddress, TxRepo(session=get_db_session()))
 
 
 if __name__ == '__main__':
