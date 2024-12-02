@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 import redis
@@ -20,7 +21,7 @@ class RedisRepo(BaseRepo):
             for field, value in values:
                 self.client.hset(hash_name, field, value)
         except Exception as err:
-            pass
+            logging.exception("An error occurred: %s", err)
 
     def set(self, data: dict, /, key: Optional[str],):
         pass
