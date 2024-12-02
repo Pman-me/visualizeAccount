@@ -1,10 +1,11 @@
 from common.check_address_type import is_account_address
 from contract.get_token_detail import get_token_details
-from settings.si import SCALE, MAX_NONCE_PLATFORM_WALLET
+from settings.si import MAX_NONCE_PLATFORM_WALLET
+from utils.get_scaled_value import get_eth_scaled_value
 
 
 def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address):
-    send = recv = None
+    send = recv = ''
     if not is_account_address(w3, tx['to']):
         for token_contract_address, value in tx_summary.items():
 
@@ -17,9 +18,9 @@ def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address):
 
     if is_account_address(w3, tx['to']):
         if w3.to_checksum_address(tx['to']) == w3.to_checksum_address(account_address):
-            recv = f"{float(tx['value']) / SCALE} ETH"
+            recv = get_eth_scaled_value(tx['value'])
         else:
-            send = f"{float(tx['value']) / SCALE} ETH"
+            send = get_eth_scaled_value(tx['value'])
     return send, recv
 
 
