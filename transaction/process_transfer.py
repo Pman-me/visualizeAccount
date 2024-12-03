@@ -24,7 +24,7 @@ def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address):
     return send, recv
 
 
-def check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
+def check_if_transfer_tx(w3, tx, logs, tx_summary):
     """
     To check the transfer of native coins
     It checks that the destination exists,
@@ -37,4 +37,4 @@ def check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
             and not logs
             and w3.eth.get_transaction_count(w3.to_checksum_address(tx['from'])) < MAX_NONCE_PLATFORM_WALLET
             and w3.eth.get_transaction_count(w3.to_checksum_address(tx['to'])) < MAX_NONCE_PLATFORM_WALLET
-            or (src_dst_per_token_contract and (len(logs) == 1))) if bool(tx['to']) else False
+            or (tx_summary and (len(logs) == 1))) if bool(tx['to']) else False
