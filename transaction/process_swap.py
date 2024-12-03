@@ -4,7 +4,7 @@ from contract.get_token_detail import get_token_details
 
 
 def process_swap_tx(w3: Web3, *, api_url, api_key, tx_summary: dict):
-    send = recv = ""
+    send = recv = ''
 
     for token_contract_address, value in tx_summary.items():
         amount, currency = get_token_details(w3, api_url, api_key, token_contract_address, value)

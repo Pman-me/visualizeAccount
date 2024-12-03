@@ -82,7 +82,7 @@ def is_transfer_tx(w3, tx, logs, tx_summary, api_url, api_key, account_address):
 
 
 def is_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_address):
-    if check_if_bridge_tx(w3, tx, logs, tx_summary):
+    if check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_address):
         send, recv = process_bridge_tx(w3, api_url=api_url, api_key=api_key, tx=tx,
                                        tx_summary=tx_summary, account_address=account_address)
         return True, send, recv

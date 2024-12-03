@@ -1,10 +1,11 @@
 from common.check_address_type import is_account_address
 from contract.get_token_detail import get_token_details
-from settings.si import SCALE, MAX_NONCE_PLATFORM_WALLET
+from settings.si import MAX_NONCE_PLATFORM_WALLET
+from utils.get_scaled_value import get_eth_scaled_value
 
 
 def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address):
-    send = recv = None
+    send = recv = ''
     if not is_account_address(w3, tx['to']):
         for token_contract_address, value in tx_summary.items():
 
@@ -17,13 +18,13 @@ def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address):
 
     if is_account_address(w3, tx['to']):
         if w3.to_checksum_address(tx['to']) == w3.to_checksum_address(account_address):
-            recv = f"{float(tx['value']) / SCALE} ETH"
+            recv = get_eth_scaled_value(tx['value'])
         else:
-            send = f"{float(tx['value']) / SCALE} ETH"
+            send = get_eth_scaled_value(tx['value'])
     return send, recv
 
 
-def check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
+def check_if_transfer_tx(w3, tx, logs, tx_summary):
     """
     To check the transfer of native coins
     It checks that the destination exists,
@@ -36,4 +37,4 @@ def check_if_transfer_tx(w3, tx, logs, src_dst_per_token_contract):
             and not logs
             and w3.eth.get_transaction_count(w3.to_checksum_address(tx['from'])) < MAX_NONCE_PLATFORM_WALLET
             and w3.eth.get_transaction_count(w3.to_checksum_address(tx['to'])) < MAX_NONCE_PLATFORM_WALLET
-            or (src_dst_per_token_contract and (len(logs) == 1))) if bool(tx['to']) else False
+            or (tx_summary and (len(logs) == 1))) if bool(tx['to']) else False

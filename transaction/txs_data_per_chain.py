@@ -1,7 +1,4 @@
-import ast
-
 from web3 import Web3
-
 from transaction.normal_txs import get_normal_txs_by_address
 
 
