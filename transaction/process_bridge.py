@@ -28,23 +28,28 @@ def process_bridge_tx(w3, api_url, api_key, tx, tx_summary: dict, account_addres
 def check_if_bridge_tx(w3, tx, logs, tx_summary: dict, api_url, api_key, account_address):
     if not tx['to']:
         return False
+    account_address_checksum = w3.to_checksum_address(account_address)
     common_condition = ((not logs and (not is_account_address(w3, tx['from'])
-                                       or not is_account_address(w3, tx['to'])))
+                                       or not is_account_address(w3, tx['to'])) and tx['input'] == '0x')
                         or len(tx_summary) == 1)
 
-    if internal_txs := get_internal_txs_by_hash(api_url=api_url, api_key=api_key, tx_hash=tx['hash']):
-        internal_from_addresses = {w3.to_checksum_address(internal_tx['from']) for internal_tx in internal_txs}
-        internal_to_addresses = {w3.to_checksum_address(internal_tx['to']) for internal_tx in internal_txs}
-        account_address_checksum = w3.to_checksum_address(account_address)
+    if common_condition:
+        return True
+    elif ((internal_txs := get_internal_txs_by_hash(api_url=api_url, api_key=api_key, tx_hash=tx['hash']))
+          and not tx_summary):
 
-        return (common_condition
-                or account_address_checksum in internal_to_addresses
+        internal_from_addresses = {w3.to_checksum_address(internal_tx['from']) for internal_tx in internal_txs if
+                                   internal_tx['from']}
+        internal_to_addresses = {w3.to_checksum_address(internal_tx['to']) for internal_tx in internal_txs if
+                                 internal_tx['to']}
+        return (
+                (account_address_checksum in internal_to_addresses
+                 and w3.to_checksum_address(tx['from']) != account_address_checksum
+                 and w3.to_checksum_address(tx['to']) != account_address_checksum)
                 or (
-                        w3.to_checksum_address(tx['from']) == w3.to_checksum_address(account_address)
-                        and w3.to_checksum_address(tx['from']) == w3.to_checksum_address(account_address)
+                        w3.to_checksum_address(tx['from']) == account_address_checksum
                         and not is_account_address(w3, tx['to'])
-                        and tx['to'] in internal_from_addresses
+                        and w3.to_checksum_address(tx['to']) in internal_from_addresses
                         and account_address_checksum not in internal_to_addresses
-                ))
-    else:
-        return common_condition
+                )
+        )

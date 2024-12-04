@@ -32,9 +32,11 @@ def check_if_transfer_tx(w3, tx, logs, tx_summary):
 
     It checks if the nonce of the src and dst wallet addresses is less than a certain value,
     and if it is more, it means that the wallet address is related to a platform(bridge, dex, ...)."""
+    if not tx['to']:
+        return False
     return (is_account_address(w3, tx['from'])
             and is_account_address(w3, tx['to'])
             and not logs
             and w3.eth.get_transaction_count(w3.to_checksum_address(tx['from'])) < MAX_NONCE_PLATFORM_WALLET
             and w3.eth.get_transaction_count(w3.to_checksum_address(tx['to'])) < MAX_NONCE_PLATFORM_WALLET
-            or (tx_summary and (len(logs) == 1))) if bool(tx['to']) else False
+            or (tx_summary and (len(logs) == 1)))
