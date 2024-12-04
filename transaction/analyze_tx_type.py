@@ -51,16 +51,19 @@ def determine_tx_type(w3, tx, logs, tx_summary, api_url, api_key, account_addres
     if result[0]:
         tx_type = TxType.TRANSFER.value
         send, recv = result[1], result[2]
+        return tx_type, send, recv
 
     result = is_swap_tx(w3, tx_summary, api_url, api_key)
     if result[0]:
         tx_type = TxType.SWAP.value
         send, recv = result[1], result[2]
+        return tx_type, send, recv
 
     result = is_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_address)
     if result[0]:
         tx_type = TxType.BRIDGE.value
         send, recv = result[1], result[2]
+        return tx_type, send, recv
 
     return tx_type, send, recv
 

@@ -31,7 +31,9 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary: dict, api_url, api_key, account
     account_address_checksum = w3.to_checksum_address(account_address)
     common_condition = ((not logs and (not is_account_address(w3, tx['from'])
                                        or not is_account_address(w3, tx['to'])) and tx['input'] == '0x')
-                        or len(tx_summary) == 1)
+                        or (len(logs) > 1 and len(tx_summary) == 1 and
+                            next((inner_dict['amount'] > 0 for inner_dict in list(tx_summary.values())), False))
+                        )
 
     if common_condition:
         return True
@@ -43,13 +45,16 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary: dict, api_url, api_key, account
         internal_to_addresses = {w3.to_checksum_address(internal_tx['to']) for internal_tx in internal_txs if
                                  internal_tx['to']}
         return (
-                (account_address_checksum in internal_to_addresses
-                 and w3.to_checksum_address(tx['from']) != account_address_checksum
-                 and w3.to_checksum_address(tx['to']) != account_address_checksum)
+                (w3.to_checksum_address(tx['from']) != account_address_checksum and
+                 w3.to_checksum_address(tx['to']) != account_address_checksum and
+                 account_address_checksum in internal_to_addresses
+                 )
                 or (
-                        w3.to_checksum_address(tx['from']) == account_address_checksum
-                        and not is_account_address(w3, tx['to'])
-                        and w3.to_checksum_address(tx['to']) in internal_from_addresses
-                        and account_address_checksum not in internal_to_addresses
+                        w3.to_checksum_address(tx['from']) == account_address_checksum and
+                        not is_account_address(w3, tx['to']) and
+                        w3.to_checksum_address(tx['to']) in internal_from_addresses and
+                        account_address_checksum not in internal_to_addresses and
+                        next((internal_tx['value'] > 0 for internal_tx in internal_txs if
+                              w3.to_checksum_address(tx['to']) == internal_tx['from']), False)
                 )
         )

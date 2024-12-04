@@ -1,3 +1,5 @@
+import logging
+
 from web3 import Web3
 from transaction.normal_txs import get_normal_txs_by_address
 
@@ -19,8 +21,8 @@ def fetch_txs_per_chain(chain_data: dict, account_address, tx_repo) -> dict:
                 txs_per_chain[w3.eth.chain_id] = txs
 
         return txs_per_chain
-    except Exception as e:
-        pass
+    except Exception as err:
+        logging.exception("An error occurred: %s", err)
 
 
 def filter_txs_by_max_nonce(w3, txs, chain_data: dict, account_address, tx_repo):
@@ -31,7 +33,7 @@ def filter_txs_by_max_nonce(w3, txs, chain_data: dict, account_address, tx_repo)
 
         for item in max_nonce_per_chain:
             chain = item[0]
-            nonce = item[1]
+            nonce = int(item[1])
 
             if chain == next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None):
                 if txs_max_nonce <= nonce:
