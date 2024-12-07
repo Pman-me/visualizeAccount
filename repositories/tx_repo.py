@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import select, exc, insert, delete, func
+from sqlalchemy import select, exc, insert, delete, func, Integer
 from sqlalchemy.testing.plugin.plugin_base import logging
 
 from models.transaction_model import TransactionModel
@@ -68,7 +68,7 @@ class TxRepo(BasePSQLRepo):
         try:
             stmt = select(
                 TransactionModel.chain,
-                func.max(TransactionModel.nonce)
+                func.max(func.nullif(TransactionModel.nonce, '').cast(Integer))
             ).group_by(TransactionModel.chain)
             return self.session.execute(stmt).fetchall()
         except exc.SQLAlchemyError as err:
