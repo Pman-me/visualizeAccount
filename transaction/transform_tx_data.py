@@ -2,13 +2,15 @@ from common.tx_enum import TxType
 from contract.get_contract_detail import get_contract_name
 
 
-def transform_tx_data(w3, api_url: str, api_key: str, *, l1_fee: str, tx: dict, tx_type, chain_data, account_address,
+def transform_tx_data(w3, *, api_url: str, api_key: str, l1_fee: str, tx: dict, tx_type, chain_data, account_address,
                       send=None,
                       recv=None):
     return {
         'hash': tx['hash'],
         'wallet': account_address,
-        'to_contract_name': get_contract_name(api_url=api_url, api_key=api_key, contract_address=tx['to']),
+        'to_contract_name': '' if tx_type == TxType.TRANSFER.value else get_contract_name(api_url=api_url,
+                                                                                          api_key=api_key,
+                                                                                          contract_address=tx['to']),
         'send': send,
         'recv': recv,
         'nonce': '' if tx_type == TxType.TRANSFER.value and recv else tx['nonce'],

@@ -4,19 +4,19 @@ from settings.si import MAX_NONCE_PLATFORM_WALLET
 from utils.get_scaled_value import get_eth_scaled_value
 
 
-def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address):
+def process_transfer_tx(w3, api_url, api_key, tx, tx_summary, account_address, logger):
     send = recv = ''
     if not is_account_address(w3, tx['to']):
         for token_contract_address, value in tx_summary.items():
 
-            amount, currency = get_token_details(w3, api_url, api_key, token_contract_address, value)
+            amount, currency = get_token_details(w3, api_url, api_key, token_contract_address, value, logger)
             if amount is not None and currency is not None:
                 if value.get('from'):
                     send = f"{amount} {currency}"
                 if value.get('to'):
                     recv = f"{amount} {currency}"
 
-    if is_account_address(w3, tx['to']):
+    if is_account_address(w3, tx['to']) and int(tx['value']) > 0:
         if w3.to_checksum_address(tx['to']) == w3.to_checksum_address(account_address):
             recv = get_eth_scaled_value(tx['value'])
         else:

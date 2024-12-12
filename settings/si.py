@@ -50,3 +50,9 @@ DEV_ENV = bool(os.getenv('DEV_ENV', default=False))
 
 
 MAX_NONCE_PLATFORM_WALLET = 20000
+
+NFT_INTERFACES_ID = [
+    '0x80ac58cd',  # ERC721
+    '0xd9b67a26',  # ERC1155
+    '0x5b2312e3',  # ERC998
+]

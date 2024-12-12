@@ -4,7 +4,7 @@ from web3 import Web3
 from transaction.normal_txs import get_normal_txs_by_address
 
 
-def fetch_txs_per_chain(chain_data: dict, account_address, tx_repo) -> dict:
+def fetch_txs_per_chain(chain_data: dict, account_address, tx_repo, logger) -> dict:
     try:
         txs_per_chain = {}
         for chain in chain_data:
@@ -22,7 +22,7 @@ def fetch_txs_per_chain(chain_data: dict, account_address, tx_repo) -> dict:
 
         return txs_per_chain
     except Exception as err:
-        logging.exception("An error occurred: %s", err)
+        logger.error("An error occurred: %s", err)
 
 
 def filter_txs_by_max_nonce(w3, txs, chain_data: dict, account_address, tx_repo):
@@ -32,13 +32,14 @@ def filter_txs_by_max_nonce(w3, txs, chain_data: dict, account_address, tx_repo)
                              w3.to_checksum_address(tx['from']) == w3.to_checksum_address(account_address)])
 
         for item in max_nonce_per_chain:
-            chain = item[0]
-            nonce = int(item[1])
+            if item[1]:
+                chain = item[0]
+                nonce = int(item[1])
 
-            if chain == next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None):
-                if txs_max_nonce <= nonce:
-                    return None
-                else:
-                    txs = list(filter(lambda tx: w3.to_checksum_address(tx['from']) == w3.to_checksum_address(
-                        account_address) and int(tx['nonce']) > nonce, txs))
+                if chain == next((item['chain'] for item in chain_data if item['chain_id'] == w3.eth.chain_id), None):
+                    if txs_max_nonce <= nonce:
+                        return None
+                    else:
+                        txs = list(filter(lambda tx: w3.to_checksum_address(tx['from']) == w3.to_checksum_address(
+                            account_address) and int(tx['nonce']) > nonce, txs))
     return txs

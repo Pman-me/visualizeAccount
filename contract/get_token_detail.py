@@ -6,7 +6,7 @@ from contract.checking_proxy_contract import is_proxy
 from contract.get_contract_detail import get_contract_abi
 
 
-def get_token_details(w3, api_url, api_key, token_contract_address, log_topics):
+def get_token_details(w3, api_url, api_key, token_contract_address, log_topics, logger):
     if contract_address := is_proxy(w3, token_contract_address):
         impl_contract_address = contract_address
     else:
@@ -19,6 +19,6 @@ def get_token_details(w3, api_url, api_key, token_contract_address, log_topics):
             currency = token_contract.functions.symbol().call()
             return amount, currency
         except ABIFunctionNotFound as err:
-            logging.exception("An error occurred: %s", err)
+            logger.error("An error occurred: %s", err)
             return None, None
     return None, None
