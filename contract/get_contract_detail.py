@@ -14,7 +14,6 @@ def get_contract_abi(*, api_url: str, api_key: str, contract_address):
     try:
         abi_endpoint = f"{api_url}?module=contract&action=getabi&address={contract_address}&apikey={api_key}"
         res = json.loads(requests.get(abi_endpoint).text)
-
         if res['status'] == '1':
             return res['result']
         return None
