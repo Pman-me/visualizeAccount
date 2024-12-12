@@ -43,7 +43,7 @@ def categorize_tx(w3, *, chain_data, txs, api_url, api_key, tx_repo, account_add
             tx_type, send, recv = determine_tx_type(w3,
                                                     tx=tx, logs=logs, tx_summary=tx_summary, api_url=api_url,
                                                     api_key=api_key, account_address=account_address, logger=logger)
-            print(tx_summary, tx['nonce'], tx['hash'])
+
             if tx_type:
                 save_tx(transform_tx_data(w3,
                                           api_url=api_url, api_key=api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
