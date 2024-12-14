@@ -5,7 +5,7 @@ logger.setLevel(logging.INFO)
 
 handler = logging.FileHandler('app.log')
 
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(message)s')
 handler.setFormatter(formatter)
 handler.setLevel(logging.INFO)
 

@@ -47,7 +47,7 @@ class TxRepo(BasePSQLRepo):
                 'fee': data['fee'],
                 'nonce': data['nonce'],
                 'date_time': datetime.fromtimestamp(int(data['timeStamp'])).strftime("%b-%d-%Y %I:%M:%S %p %Z"),
-                'chain': data['chain'],
+                'chain_id': data['chain_id'],
                 'type': data['type']
             }
             stmt = insert(TransactionModel)
@@ -67,9 +67,9 @@ class TxRepo(BasePSQLRepo):
     def get_max_nonce_per_chain(self):
         try:
             stmt = select(
-                TransactionModel.chain,
+                TransactionModel.chain_id,
                 func.max(func.nullif(TransactionModel.nonce, '').cast(Integer))
-            ).group_by(TransactionModel.chain)
+            ).group_by(TransactionModel.chain_id)
             return self.session.execute(stmt).fetchall()
         except exc.SQLAlchemyError as err:
             logging.exception("An error occurred: %s", err)

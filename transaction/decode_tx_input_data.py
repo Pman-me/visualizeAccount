@@ -1,13 +1,13 @@
 from web3 import Web3
 
-from contract.get_contract_detail import check_contract_address, get_contract_abi
+from contract.get_contract_detail import resolve_contract_address, get_contract_abi
 
 
-def decode_tx_input_data(w3: Web3, *, api_key: str, api_endpoint: str,  tx):
+def decode_tx_input_data(*, w3: Web3, api_key: str, api_url: str,  tx, logger):
     try:
-        contract_address = check_contract_address(tx['to'], w3)
+        contract_address = resolve_contract_address(tx['to'], w3)
 
-        if abi := get_contract_abi(api_endpoint=api_endpoint, api_key=api_key, contract_address=contract_address):
+        if abi := get_contract_abi(api_url=api_url, api_key=api_key, contract_address=contract_address, logger=logger):
             contract = w3.eth.contract(address=w3.to_checksum_address(contract_address), abi=abi)
 
             # Decode transaction input
