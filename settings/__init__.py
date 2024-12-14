@@ -9,4 +9,4 @@ except ImportError:
     pass
 
 RDBMS_ENGINE = f"postgresql://{RDBMS_USER}:{RDBMS_PASSWORD}@{RDBMS_HOST}:{RDBMS_PORT}/{RDBMS_DB}"
-AccountAddress = AccountAddress
+account_address = AccountAddress

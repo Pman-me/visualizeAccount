@@ -29,21 +29,16 @@ NumberFloatingPoint = 18
 SCALE = 10 ** NumberFloatingPoint
 D_SCALE = Decimal(SCALE)
 
-# Chains API Key
-BASE_API_KEY = os.getenv('BASE_API_KEY')
-SCROLL_API_KEY = os.getenv('SCROLL_API_KEY')
+# Scan API Key
+ETHERSCAN_API_KEY = os.getenv('ETHERSCAN_API_KEY')
+ETHERSCAN_API_BASE_URL = 'https://api.etherscan.io/v2/api'
+ETHERSCAN_API_URL_QUERY_PARAM = ''
 
-# Chain Detail
-# settings = EnvSettings()
-# account_address = settings.ACCOUNT_ADDRESS
-
-CHAIN_DATA = [
-    {'chain': 'base', 'chain_id': 8453, 'rpc': 'https://mainnet.base.org', 'api_url': 'https://api.basescan.org/api',
-     'api_key': BASE_API_KEY},
-    {'chain': 'scroll', 'chain_id': 534352, 'rpc': 'https://rpc.scroll.io', 'api_url': 'https://api.scrollscan.com/api',
-     'api_key': SCROLL_API_KEY},
+# Chains Metadata
+CHAINS = [
+    {'chain_id': 8453, 'rpc': 'https://mainnet.base.org'},
+    {'chain_id': 534352, 'rpc': 'https://rpc.scroll.io'},
 ]
-
 
 # Dev Environment Settings
 DEV_ENV = bool(os.getenv('DEV_ENV', default=False))

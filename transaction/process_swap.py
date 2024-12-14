@@ -7,7 +7,9 @@ def process_swap_tx(w3: Web3, *, api_url, api_key, tx_summary: dict, logger):
     send = recv = ''
 
     for token_contract_address, value in tx_summary.items():
-        amount, currency = get_token_details(w3, api_url, api_key, token_contract_address, value, logger)
+        amount, currency = get_token_details(w3=w3, api_url=api_url, api_key=api_key,
+                                             token_contract_address=token_contract_address, log_topics=value,
+                                             logger=logger)
 
         if amount is not None and currency is not None:
             if value.get('from') or value.get('deposit'):

@@ -15,6 +15,6 @@ class TransactionModel(BaseModel):
     fee = Column(Float)
     nonce = Column(String())
     date_time = Column(String())
-    chain = Column(String())
+    chain_id = Column(String())
     type = Column(String())
     bridge_id = Column(Integer, nullable=True)

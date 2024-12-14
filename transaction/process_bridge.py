@@ -9,7 +9,9 @@ def process_bridge_tx(w3, api_url, api_key, tx, tx_summary, account_address, log
     send = recv = ''
     if tx_summary:
         for token_contract_address, value in tx_summary.items():
-            amount, currency = get_token_details(w3, api_url, api_key, token_contract_address, value, logger)
+            amount, currency = get_token_details(w3=w3, api_url=api_url, api_key=api_key,
+                                                 token_contract_address=token_contract_address,
+                                                 log_topics=value, logger=logger)
             if amount is not None and currency is not None:
                 if value.get('from'):
                     send += f"{amount} {currency}" if not send else f", {amount} {currency}"
@@ -32,10 +34,13 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_addre
     account_address_checksum = w3.to_checksum_address(account_address)
 
     if (
-            ((is_account_address(w3, tx['from']) or is_account_address(w3, tx['to']))
-             and not logs
-             and (w3.eth.get_transaction_count(w3.to_checksum_address(tx['from'])) > MAX_NONCE_PLATFORM_WALLET
-                  or w3.eth.get_transaction_count(w3.to_checksum_address(tx['to']))) > MAX_NONCE_PLATFORM_WALLET)
+            (
+                    (is_account_address(w3, tx['from']) or is_account_address(w3, tx['to'])) and
+                    (w3.eth.get_transaction_count(w3.to_checksum_address(tx['from'])) > MAX_NONCE_PLATFORM_WALLET
+                     or w3.eth.get_transaction_count(w3.to_checksum_address(tx['to'])) > MAX_NONCE_PLATFORM_WALLET) and
+                    not logs
+                    and tx['value'] == '0x'
+            )
             or
             (len(logs) > 1 and len(tx_summary) == 1 and len(tx_summary.keys()) == 1 and
              next((inner_dict['amount'] > 0 for inner_dict in list(tx_summary.values())), False))
@@ -43,12 +48,10 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_addre
         return True
     elif ((internal_txs := get_internal_txs_by_hash(api_url=api_url, api_key=api_key, tx_hash=tx['hash']))
           and not tx_summary):
-
         internal_from_addresses = {w3.to_checksum_address(internal_tx['from']) for internal_tx in internal_txs if
                                    internal_tx['from']}
         internal_to_addresses = {w3.to_checksum_address(internal_tx['to']) for internal_tx in internal_txs if
                                  internal_tx['to']}
-
         return (
                 (w3.to_checksum_address(tx['from']) != account_address_checksum and
                  w3.to_checksum_address(tx['to']) != account_address_checksum and
