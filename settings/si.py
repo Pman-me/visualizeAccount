@@ -32,7 +32,7 @@ D_SCALE = Decimal(SCALE)
 # Scan API Key
 ETHERSCAN_API_KEY = os.getenv('ETHERSCAN_API_KEY')
 ETHERSCAN_API_BASE_URL = 'https://api.etherscan.io/v2/api'
-ETHERSCAN_API_URL_QUERY_PARAM = ''
+CHAIN_ID_PARAM = '?chainid='
 
 # Chains Metadata
 CHAINS = [

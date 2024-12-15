@@ -6,7 +6,7 @@ from common.tx_enum import TxType
 from contract.is_nft_contract import is_nft_contract
 from repositories.tx_repo import TxRepo
 from settings.si import TRANSFER_EVENT_SIG_HASH, DEPOSIT_EVENT_SIG_HASH, \
-    WITHDRAWAL_EVENT_SIG_HASH
+    WITHDRAWAL_EVENT_SIG_HASH, CHAIN_ID_PARAM
 from transaction.process_bridge import process_bridge_tx, check_if_bridge_tx
 from transaction.process_swap import process_swap_tx
 from transaction.process_transfer import process_transfer_tx, check_if_transfer_tx
@@ -21,7 +21,7 @@ def process_tx(*, chains: [], txs_per_chain: dict, api_base_url: str, api_key: s
 
         categorize_tx(w3=Web3(Web3.HTTPProvider(chain['rpc'])),
                       txs=txs,
-                      api_url=api_base_url + '?chainid=' + str(chain_id),
+                      api_url=api_base_url + CHAIN_ID_PARAM + str(chain_id),
                       api_key=api_key,
                       tx_repo=tx_repo,
                       account_address=account_address,
@@ -42,7 +42,7 @@ def categorize_tx(*, w3, txs, api_url, api_key, tx_repo, account_address, logger
             tx_type, send, recv = determine_tx_type(w3=w3,
                                                     tx=tx, logs=logs, tx_summary=tx_summary, api_url=api_url,
                                                     api_key=api_key, account_address=account_address, logger=logger)
-            print(tx_summary, tx['nonce'], tx['hash'])
+
             if tx_type:
                 save_tx(transform_tx_data(w3,
                                           api_url=api_url, api_key=api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
@@ -112,6 +112,7 @@ def process_token_transfer_logs(*, w3, logs, api_url, api_key, account_address, 
             contract_address = log['address']
             if is_nft_contract(w3=w3, api_url=api_url, api_key=api_key, address=contract_address, logger=logger):
                 return {}
+
             amount = int(log['data'].hex(), 16) if log['data'].hex() != '0x' else 0
             event_sig_hash = int(log['topics'][0].hex(), 16)
 
@@ -119,14 +120,10 @@ def process_token_transfer_logs(*, w3, logs, api_url, api_key, account_address, 
 
                 if w3.to_checksum_address('0x' + log['topics'][1].hex()[-40:]) == w3.to_checksum_address(
                         account_address):
-                    # if int(log['topics'][2].hex(), 16) == ZERO_ADDRESS:
-                    #     return {}
                     tx_summary[contract_address].update({'from': True, 'amount': amount})
 
                 if w3.to_checksum_address('0x' + log['topics'][2].hex()[-40:]) == w3.to_checksum_address(
                         account_address):
-                    # if int(log['topics'][1].hex(), 16) == ZERO_ADDRESS:
-                    #     return {}
                     tx_summary[contract_address].update({'to': True, 'amount': amount})
 
             if event_sig_hash == DEPOSIT_EVENT_SIG_HASH:

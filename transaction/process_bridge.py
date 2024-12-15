@@ -24,7 +24,6 @@ def process_bridge_tx(w3, api_url, api_key, tx, tx_summary, account_address, log
             send = get_eth_scaled_value(tx['value']) if not send else ', ' + get_eth_scaled_value(tx['value'])
         if w3.to_checksum_address(tx['to']) == w3.to_checksum_address(account_address):
             recv = get_eth_scaled_value(tx['value'])
-
     return send, recv
 
 
@@ -32,14 +31,13 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_addre
     if not tx['to']:
         return False
     account_address_checksum = w3.to_checksum_address(account_address)
-
     if (
             (
                     (is_account_address(w3, tx['from']) or is_account_address(w3, tx['to'])) and
                     (w3.eth.get_transaction_count(w3.to_checksum_address(tx['from'])) > MAX_NONCE_PLATFORM_WALLET
                      or w3.eth.get_transaction_count(w3.to_checksum_address(tx['to'])) > MAX_NONCE_PLATFORM_WALLET) and
                     not logs
-                    and tx['value'] == '0x'
+                    and tx['input'] == '0x'
             )
             or
             (len(logs) > 1 and len(tx_summary) == 1 and len(tx_summary.keys()) == 1 and
@@ -52,6 +50,7 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_addre
                                    internal_tx['from']}
         internal_to_addresses = {w3.to_checksum_address(internal_tx['to']) for internal_tx in internal_txs if
                                  internal_tx['to']}
+
         return (
                 (w3.to_checksum_address(tx['from']) != account_address_checksum and
                  w3.to_checksum_address(tx['to']) != account_address_checksum and
