@@ -2,21 +2,24 @@ from common.check_address_type import is_account_address
 from contract.get_token_detail import get_token_details
 from settings.si import MAX_NONCE_PLATFORM_WALLET
 from transaction.internal_txs import get_internal_txs_by_hash
-from utils.get_scaled_value import get_eth_scaled_value
+from utils.format_token_amount import get_eth_scaled_value, format_token_amount
 
 
 def process_bridge_tx(w3, api_url, api_key, tx, tx_summary, account_address, logger):
     send = recv = ''
     if tx_summary:
         for token_contract_address, value in tx_summary.items():
-            amount, currency = get_token_details(w3=w3, api_url=api_url, api_key=api_key,
-                                                 token_contract_address=token_contract_address,
-                                                 log_topics=value, logger=logger)
-            if amount is not None and currency is not None:
+            decimals, currency = get_token_details(w3=w3, api_url=api_url, api_key=api_key,
+                                                   token_contract_address=token_contract_address,
+                                                   logger=logger)
+            if decimals is not None and currency is not None:
                 if value.get('from'):
-                    send += f"{amount} {currency}" if not send else f", {amount} {currency}"
+                    send += format_token_amount(value['amount'], decimals,
+                                                currency) if not send else ', ' + format_token_amount(value['amount'],
+                                                                                                      decimals,
+                                                                                                      currency)
                 if value.get('to'):
-                    recv = f"{amount} {currency}"
+                    recv = format_token_amount(value['amount'], decimals, currency)
 
     if (not tx_summary or any('deposit' in nested_dict for nested_dict in tx_summary.values()) or
             any('withdrawal' in nested_dict for nested_dict in tx_summary.values())):
@@ -27,7 +30,7 @@ def process_bridge_tx(w3, api_url, api_key, tx, tx_summary, account_address, log
     return send, recv
 
 
-def check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_address):
+def check_if_bridge_tx(*, w3, tx, logs, tx_summary, api_url, api_key, account_address, logger):
     if not tx['to']:
         return False
     account_address_checksum = w3.to_checksum_address(account_address)
@@ -44,7 +47,8 @@ def check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_addre
              next((inner_dict['amount'] > 0 for inner_dict in list(tx_summary.values())), False))
     ):
         return True
-    elif ((internal_txs := get_internal_txs_by_hash(api_url=api_url, api_key=api_key, tx_hash=tx['hash']))
+    elif ((
+          internal_txs := get_internal_txs_by_hash(api_url=api_url, api_key=api_key, tx_hash=tx['hash'], logger=logger))
           and not tx_summary):
         internal_from_addresses = {w3.to_checksum_address(internal_tx['from']) for internal_tx in internal_txs if
                                    internal_tx['from']}
