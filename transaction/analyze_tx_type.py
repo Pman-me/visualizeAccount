@@ -34,15 +34,16 @@ def categorize_tx(*, w3, txs, api_url, api_key, tx_repo, account_address, logger
             tx_receipt = w3.eth.get_transaction_receipt(tx['hash'])
             logs = tx_receipt['logs']
 
-            if is_nft_contract(w3=w3, api_url=api_url, api_key=api_key, address=tx['to'], logger=logger):
-                continue
             tx_summary = process_token_transfer_logs(w3=w3,
                                                      logs=logs, api_url=api_url, api_key=api_key,
                                                      account_address=account_address, logger=logger)
+            if (is_nft_contract(w3=w3, api_url=api_url, api_key=api_key, address=tx['to'], logger=logger)
+                    or tx_summary is None):
+                continue
             tx_type, send, recv = determine_tx_type(w3=w3,
                                                     tx=tx, logs=logs, tx_summary=tx_summary, api_url=api_url,
                                                     api_key=api_key, account_address=account_address, logger=logger)
-
+            print(tx_summary, tx['nonce'], tx['hash'])
             if tx_type:
                 save_tx(transform_tx_data(w3,
                                           api_url=api_url, api_key=api_key, l1_fee=tx_receipt['l1Fee'], tx=tx,
@@ -95,14 +96,16 @@ def is_transfer_tx(*, w3, tx, logs, tx_summary, api_url, api_key, account_addres
 
 
 def is_bridge_tx(*, w3, tx, logs, tx_summary, api_url, api_key, account_address, logger):
-    if check_if_bridge_tx(w3, tx, logs, tx_summary, api_url, api_key, account_address):
+    if check_if_bridge_tx(w3=w3, tx=tx, logs=logs, tx_summary=tx_summary,
+                          api_url=api_url, api_key=api_key,
+                          account_address=account_address, logger=logger):
         send, recv = process_bridge_tx(w3, api_url=api_url, api_key=api_key, tx=tx,
                                        tx_summary=tx_summary, account_address=account_address, logger=logger)
         return True, send, recv
     return False, '', ''
 
 
-def process_token_transfer_logs(*, w3, logs, api_url, api_key, account_address, logger) -> dict:
+def process_token_transfer_logs(*, w3, logs, api_url, api_key, account_address, logger):
     """
     Processing token transfer logs and map logs details to transferred token address
     """
@@ -111,8 +114,7 @@ def process_token_transfer_logs(*, w3, logs, api_url, api_key, account_address, 
         for log in logs:
             contract_address = log['address']
             if is_nft_contract(w3=w3, api_url=api_url, api_key=api_key, address=contract_address, logger=logger):
-                return {}
-
+                return None
             amount = int(log['data'].hex(), 16) if log['data'].hex() != '0x' else 0
             event_sig_hash = int(log['topics'][0].hex(), 16)
 

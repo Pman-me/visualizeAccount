@@ -1,7 +1,8 @@
 from common.check_address_type import is_account_address
 from contract.get_token_detail import get_token_details
 from settings.si import MAX_NONCE_PLATFORM_WALLET
-from utils.get_scaled_value import get_eth_scaled_value
+
+from utils.format_token_amount import format_token_amount, get_eth_scaled_value
 
 
 def process_transfer_tx(*, w3, api_url, api_key, tx, tx_summary, account_address, logger):
@@ -9,14 +10,14 @@ def process_transfer_tx(*, w3, api_url, api_key, tx, tx_summary, account_address
     if not is_account_address(w3, tx['to']):
         for token_contract_address, value in tx_summary.items():
 
-            amount, currency = get_token_details(w3=w3, api_url=api_url, api_key=api_key,
-                                                 token_contract_address=token_contract_address, log_topics=value,
-                                                 logger=logger)
-            if amount is not None and currency is not None:
+            decimals, currency = get_token_details(w3=w3, api_url=api_url, api_key=api_key,
+                                                   token_contract_address=token_contract_address,
+                                                   logger=logger)
+            if decimals is not None and currency is not None:
                 if value.get('from'):
-                    send = f"{amount} {currency}"
+                    send = format_token_amount(value['amount'], decimals, currency)
                 if value.get('to'):
-                    recv = f"{amount} {currency}"
+                    recv = format_token_amount(value['amount'], decimals, currency)
 
     if is_account_address(w3, tx['to']) and int(tx['value']) > 0:
         if w3.to_checksum_address(tx['to']) == w3.to_checksum_address(account_address):
